@@ -12,19 +12,25 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('animation smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
     await tester.pumpWidget(App());
 
     expect(find.text(curves.first.name), findsOneWidget);
     expect(find.byKey(Key('curveGraph')), findsOneWidget);
     expect(find.byIcon(Icons.play_arrow), findsOneWidget);
 
-    /*// Tap the '+' icon and trigger a frame.
     await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);*/
+    expect(find.text('1000 ms'), findsNothing);
+    expect(find.text('1100 ms'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.remove));
+    await tester.pump();
+
+    expect(find.text('1000 ms'), findsOneWidget);
+    expect(find.text('1100 ms'), findsNothing);
+
+    await tester.tap(find.byIcon(Icons.play_arrow));
+    await tester.pump();
   });
 }

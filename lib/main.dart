@@ -41,6 +41,12 @@ class _AnimGraphrState extends State<AnimGraphr>
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     controller.duration = aMillisecond * duration;
     anim = CurvedAnimation(parent: controller, curve: currentCurve);
