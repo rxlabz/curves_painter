@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:quiver/iterables.dart';
 import 'package:quiver/time.dart';
 
@@ -21,24 +20,40 @@ class AnimGraphr extends StatefulWidget {
   _AnimGraphrState createState() => _AnimGraphrState();
 }
 
+class NamedCurve {
+  final String name;
+  final Curve curve;
+
+  const NamedCurve(this.name, this.curve);
+}
+
 class _AnimGraphrState extends State<AnimGraphr>
     with SingleTickerProviderStateMixin {
   final curves = [
-    Curves.bounceIn,
-    Curves.bounceInOut,
-    Curves.bounceOut,
-    Curves.ease,
-    Curves.easeIn,
-    Curves.easeInBack,
-    Curves.easeInCirc,
-    Curves.easeInExpo,
-    Curves.easeInCubic,
-    Curves.easeInQuad,
-    Curves.easeInQuart,
-    Curves.easeInQuint,
-    Curves.easeInSine,
-    Curves.easeInOut,
-    Curves.easeInToLinear,
+    const NamedCurve('bounceIn', Curves.bounceIn),
+    const NamedCurve('bounceInOut', Curves.bounceInOut),
+    const NamedCurve('bounceOut', Curves.bounceOut),
+    const NamedCurve('ease', Curves.ease),
+    const NamedCurve('easeIn', Curves.easeIn),
+    const NamedCurve('easeInBack', Curves.easeInBack),
+    const NamedCurve('easeInCirc', Curves.easeInCirc),
+    const NamedCurve('easeInExpo', Curves.easeInExpo),
+    const NamedCurve('easeInCubic', Curves.easeInCubic),
+    const NamedCurve('easeInQuad', Curves.easeInQuad),
+    const NamedCurve('easeInQuart', Curves.easeInQuart),
+    const NamedCurve('easeInQuint', Curves.easeInQuint),
+    const NamedCurve('easeInSine', Curves.easeInSine),
+    const NamedCurve('easeInOut', Curves.easeInOut),
+    const NamedCurve('easeInToLinear', Curves.easeInToLinear),
+    const NamedCurve('easeOut', Curves.easeOut),
+    const NamedCurve('easeOutBack', Curves.easeOutBack),
+    const NamedCurve('easeOutCirc', Curves.easeOutCirc),
+    const NamedCurve('easeOutExpo', Curves.easeOutExpo),
+    const NamedCurve('easeOutCubic', Curves.easeOutCubic),
+    const NamedCurve('easeOutQuad', Curves.easeOutQuad),
+    const NamedCurve('easeOutQuart', Curves.easeOutQuart),
+    const NamedCurve('easeOutQuint', Curves.easeOutQuint),
+    const NamedCurve('easeOutSine', Curves.easeOutSine),
   ];
 
   Curve currentCurve = Curves.bounceIn;
@@ -72,94 +87,94 @@ class _AnimGraphrState extends State<AnimGraphr>
               onChanged: onCurveChanged,
             ),
             Container(
+              color: Colors.grey.shade200,
+              padding: const EdgeInsets.all(12),
               constraints: BoxConstraints.expand(height: 200),
-              child: CustomPaint(
-                painter: CurvePainter(currentCurve, this, controller),
-              ),
+              child: CustomPaint(painter: CurvePainter(controller, anim)),
             ),
             ConstrainedBox(
               constraints: BoxConstraints.expand(height: 200),
-              child: Stack(
-                children: <Widget>[
-                  Positioned(
-                    left: anim.value * 200,
-                    child: Container(
-                      color: Colors.cyan,
-                      height: 100,
-                      width: 100,
-                    ),
-                  )
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: anim.value * 200,
+                      child: Opacity(
+                        opacity: min([1, anim.value + .2]),
+                        child: Container(
+                            color: Colors.cyan,
+                            height: 100,
+                            width: 20 + (anim.value * 100)),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-            RaisedButton(
-              onPressed: controller.forward,
-              child: Text('Animate'),
-            )
+            RaisedButton(onPressed: controller.forward, child: Text('Animate'))
           ],
         ),
       ),
-    ); /**/
+    );
   }
 
-  DropdownMenuItem<Curve> _buildCurveMenuItem(Curve c) => DropdownMenuItem(
-        child: Text('$c'),
-        value: c,
+  DropdownMenuItem<Curve> _buildCurveMenuItem(NamedCurve c) => DropdownMenuItem(
+        child: Text('${c.name}'),
+        value: c.curve,
       );
 
-  void onCurveChanged(Curve c) {
-    setState(() => currentCurve = c);
-  }
+  void onCurveChanged(Curve c) => setState(() => currentCurve = c);
 }
 
+final axisPaint = Paint()
+  ..color = Colors.grey.shade600
+  ..strokeWidth = 2;
+
+const divisions = 200;
+
 class CurvePainter extends CustomPainter {
-  final Curve curve;
-  final TickerProvider ticker;
+  final CurvedAnimation anim;
   final AnimationController controller;
 
-  CurvePainter(this.curve, this.ticker, this.controller);
+  CurvePainter(this.controller, this.anim);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final points = computeCurveValues(controller, curve, 200);
+    final points = computeCurveValues(anim, divisions);
     print('points $size $points');
 
-    canvas.drawRect(
-        Rect.fromPoints(Offset.zero, Offset(size.width, size.height)),
-        Paint()..color = Colors.grey.shade200);
+    canvas.drawLine(
+        Offset(0, size.height), Offset(size.width, size.height), axisPaint);
+    canvas.drawLine(Offset(0, 0), Offset(0, size.height), axisPaint);
 
     final ptPaint = Paint()
-      ..color = Colors.black
+      ..color = Colors.cyan
       ..strokeWidth = 2;
-    //points.forEach((p){
     canvas.drawPoints(
         PointMode.polygon,
         enumerate(points)
             .map((y) => Offset(
-                  y.index / 200 * size.width,
+                  y.index / divisions * size.width,
                   y.value * size.height,
                 ))
             .toList(),
         ptPaint);
-    //});
+
+    canvas.drawCircle(
+        Offset(controller.value * size.width,
+            points[(controller.value * (divisions - 1)).floor()] * size.height),
+        5.0,
+        Paint()..color = Colors.pink);
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+  bool shouldRepaint(CurvePainter oldDelegate) {
+    return controller.value != oldDelegate.controller.value;
   }
 }
 
-List<double> computeCurveValues(AnimationController parent, Curve curve,
-    [int divisions = 10]) {
-  List<double> points = <double>[];
-  final anim = CurvedAnimation(parent: parent, curve: curve);
+List<double> computeCurveValues(CurvedAnimation anim, int divisions) {
   return List.generate(
       divisions, (index) => 1 - anim.curve.transform(index / divisions));
-  /*anim.addListener(() {
-    print('value ${anim.value}');
-    points.add(anim.value);
-  });*/
-  parent.forward();
-  return points;
 }
