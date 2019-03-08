@@ -2,4 +2,4 @@
 
 Flutter animation curves visualizer
 
-!(curves)[curves.gif]
+![curves](curves.gif)
