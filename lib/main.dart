@@ -6,25 +6,21 @@ import 'package:quiver/time.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AnimGraphr(),
-    );
-  }
-}
-
-class AnimGraphr extends StatefulWidget {
-  @override
-  _AnimGraphrState createState() => _AnimGraphrState();
-}
-
 class NamedCurve {
   final String name;
   final Curve curve;
 
   const NamedCurve(this.name, this.curve);
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => MaterialApp(home: AnimGraphr());
+}
+
+class AnimGraphr extends StatefulWidget {
+  @override
+  _AnimGraphrState createState() => _AnimGraphrState();
 }
 
 class _AnimGraphrState extends State<AnimGraphr>
@@ -33,32 +29,48 @@ class _AnimGraphrState extends State<AnimGraphr>
     const NamedCurve('bounceIn', Curves.bounceIn),
     const NamedCurve('bounceInOut', Curves.bounceInOut),
     const NamedCurve('bounceOut', Curves.bounceOut),
+    const NamedCurve('decelerate', Curves.decelerate),
+    const NamedCurve('fastLinearToSlowEaseIn', Curves.fastLinearToSlowEaseIn),
     const NamedCurve('ease', Curves.ease),
     const NamedCurve('easeIn', Curves.easeIn),
-    const NamedCurve('easeInBack', Curves.easeInBack),
-    const NamedCurve('easeInCirc', Curves.easeInCirc),
-    const NamedCurve('easeInExpo', Curves.easeInExpo),
-    const NamedCurve('easeInCubic', Curves.easeInCubic),
+    const NamedCurve('easeInToLinear', Curves.easeInToLinear),
+    const NamedCurve('easeInSine', Curves.easeInSine),
     const NamedCurve('easeInQuad', Curves.easeInQuad),
+    const NamedCurve('easeInCubic', Curves.easeInCubic),
     const NamedCurve('easeInQuart', Curves.easeInQuart),
     const NamedCurve('easeInQuint', Curves.easeInQuint),
-    const NamedCurve('easeInSine', Curves.easeInSine),
-    const NamedCurve('easeInOut', Curves.easeInOut),
-    const NamedCurve('easeInToLinear', Curves.easeInToLinear),
+    const NamedCurve('easeInExpo', Curves.easeInExpo),
+    const NamedCurve('easeInCirc', Curves.easeInCirc),
+    const NamedCurve('easeInBack', Curves.easeInBack),
     const NamedCurve('easeOut', Curves.easeOut),
-    const NamedCurve('easeOutBack', Curves.easeOutBack),
-    const NamedCurve('easeOutCirc', Curves.easeOutCirc),
-    const NamedCurve('easeOutExpo', Curves.easeOutExpo),
-    const NamedCurve('easeOutCubic', Curves.easeOutCubic),
+    const NamedCurve('linearToEaseOut', Curves.linearToEaseOut),
+    const NamedCurve('easeOutSine', Curves.easeOutSine),
     const NamedCurve('easeOutQuad', Curves.easeOutQuad),
+    const NamedCurve('easeOutCubic', Curves.easeOutCubic),
     const NamedCurve('easeOutQuart', Curves.easeOutQuart),
     const NamedCurve('easeOutQuint', Curves.easeOutQuint),
-    const NamedCurve('easeOutSine', Curves.easeOutSine),
+    const NamedCurve('easeOutExpo', Curves.easeOutExpo),
+    const NamedCurve('easeOutCirc', Curves.easeOutCirc),
+    const NamedCurve('easeOutBack', Curves.easeOutBack),
+    const NamedCurve('easeInOutSine', Curves.easeInOutSine),
+    const NamedCurve('easeInOut', Curves.easeInOut),
+    const NamedCurve('easeInOutBack', Curves.easeInOutBack),
+    const NamedCurve('easeInOutCirc', Curves.easeInOutCirc),
+    const NamedCurve('easeInOutCubic', Curves.easeInOutCubic),
+    const NamedCurve('easeInOutQuad', Curves.easeInOutQuad),
+    const NamedCurve('easeInOutQuart', Curves.easeInOutQuart),
+    const NamedCurve('easeInOutQuint', Curves.easeInOutQuint),
+    const NamedCurve('easeInOutExpo', Curves.easeInOutExpo),
+    const NamedCurve('fastOutSlowIn', Curves.fastOutSlowIn),
+    const NamedCurve('elasticIn', Curves.elasticIn),
+    const NamedCurve('elasticOut', Curves.elasticOut),
+    const NamedCurve('elasticInOut', Curves.elasticInOut),
   ];
 
   Curve currentCurve = Curves.bounceIn;
 
   AnimationController controller;
+
   CurvedAnimation anim;
 
   @override
@@ -76,9 +88,9 @@ class _AnimGraphrState extends State<AnimGraphr>
   Widget build(BuildContext context) {
     anim = CurvedAnimation(parent: controller, curve: currentCurve);
 
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             DropdownButton(
@@ -142,39 +154,47 @@ class CurvePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final points = computeCurveValues(anim, divisions);
-    print('points $size $points');
+    _drawAxis(canvas, size);
+    _drawCurve(canvas, points, size);
+    _drawCurrentValueMarker(canvas, size, points);
+  }
 
-    canvas.drawLine(
-        Offset(0, size.height), Offset(size.width, size.height), axisPaint);
-    canvas.drawLine(Offset(0, 0), Offset(0, size.height), axisPaint);
+  void _drawCurrentValueMarker(Canvas canvas, Size size, List<double> points) {
+    canvas.drawCircle(
+      Offset(controller.value * size.width,
+          points[(controller.value * (divisions - 1)).floor()] * size.height),
+      5.0,
+      Paint()..color = Colors.pink,
+    );
+  }
 
+  void _drawCurve(Canvas canvas, List<double> points, Size size) {
     final ptPaint = Paint()
       ..color = Colors.cyan
       ..strokeWidth = 2;
     canvas.drawPoints(
-        PointMode.polygon,
-        enumerate(points)
-            .map((y) => Offset(
-                  y.index / divisions * size.width,
-                  y.value * size.height,
-                ))
-            .toList(),
-        ptPaint);
+      PointMode.polygon,
+      enumerate(points)
+          .map((y) => Offset(
+                y.index / divisions * size.width,
+                y.value * size.height,
+              ))
+          .toList(),
+      ptPaint,
+    );
+  }
 
-    canvas.drawCircle(
-        Offset(controller.value * size.width,
-            points[(controller.value * (divisions - 1)).floor()] * size.height),
-        5.0,
-        Paint()..color = Colors.pink);
+  void _drawAxis(Canvas canvas, Size size) {
+    canvas.drawLine(
+        Offset(0, size.height), Offset(size.width, size.height), axisPaint);
+    canvas.drawLine(Offset(0, 0), Offset(0, size.height), axisPaint);
   }
 
   @override
-  bool shouldRepaint(CurvePainter oldDelegate) {
-    return controller.value != oldDelegate.controller.value;
-  }
+  bool shouldRepaint(CurvePainter oldDelegate) =>
+      controller.value != oldDelegate.controller.value;
 }
 
-List<double> computeCurveValues(CurvedAnimation anim, int divisions) {
-  return List.generate(
-      divisions, (index) => 1 - anim.curve.transform(index / divisions));
-}
+List<double> computeCurveValues(CurvedAnimation anim, int divisions) =>
+    List.generate(
+        divisions, (index) => 1 - anim.curve.transform(index / divisions));
