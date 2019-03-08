@@ -6,6 +6,54 @@ import 'package:quiver/time.dart';
 
 void main() => runApp(MyApp());
 
+const curves = [
+  const NamedCurve('bounceIn', Curves.bounceIn),
+  const NamedCurve('bounceInOut', Curves.bounceInOut),
+  const NamedCurve('bounceOut', Curves.bounceOut),
+  const NamedCurve('decelerate', Curves.decelerate),
+  const NamedCurve('fastLinearToSlowEaseIn', Curves.fastLinearToSlowEaseIn),
+  const NamedCurve('ease', Curves.ease),
+  const NamedCurve('easeIn', Curves.easeIn),
+  const NamedCurve('easeInToLinear', Curves.easeInToLinear),
+  const NamedCurve('easeInSine', Curves.easeInSine),
+  const NamedCurve('easeInQuad', Curves.easeInQuad),
+  const NamedCurve('easeInCubic', Curves.easeInCubic),
+  const NamedCurve('easeInQuart', Curves.easeInQuart),
+  const NamedCurve('easeInQuint', Curves.easeInQuint),
+  const NamedCurve('easeInExpo', Curves.easeInExpo),
+  const NamedCurve('easeInCirc', Curves.easeInCirc),
+  const NamedCurve('easeInBack', Curves.easeInBack),
+  const NamedCurve('easeOut', Curves.easeOut),
+  const NamedCurve('linearToEaseOut', Curves.linearToEaseOut),
+  const NamedCurve('easeOutSine', Curves.easeOutSine),
+  const NamedCurve('easeOutQuad', Curves.easeOutQuad),
+  const NamedCurve('easeOutCubic', Curves.easeOutCubic),
+  const NamedCurve('easeOutQuart', Curves.easeOutQuart),
+  const NamedCurve('easeOutQuint', Curves.easeOutQuint),
+  const NamedCurve('easeOutExpo', Curves.easeOutExpo),
+  const NamedCurve('easeOutCirc', Curves.easeOutCirc),
+  const NamedCurve('easeOutBack', Curves.easeOutBack),
+  const NamedCurve('easeInOutSine', Curves.easeInOutSine),
+  const NamedCurve('easeInOut', Curves.easeInOut),
+  const NamedCurve('easeInOutBack', Curves.easeInOutBack),
+  const NamedCurve('easeInOutCirc', Curves.easeInOutCirc),
+  const NamedCurve('easeInOutCubic', Curves.easeInOutCubic),
+  const NamedCurve('easeInOutQuad', Curves.easeInOutQuad),
+  const NamedCurve('easeInOutQuart', Curves.easeInOutQuart),
+  const NamedCurve('easeInOutQuint', Curves.easeInOutQuint),
+  const NamedCurve('easeInOutExpo', Curves.easeInOutExpo),
+  const NamedCurve('fastOutSlowIn', Curves.fastOutSlowIn),
+  const NamedCurve('elasticIn', Curves.elasticIn),
+  const NamedCurve('elasticOut', Curves.elasticOut),
+  const NamedCurve('elasticInOut', Curves.elasticInOut),
+];
+
+final axisPaint = Paint()
+  ..color = Colors.grey.shade600
+  ..strokeWidth = 2;
+
+const divisions = 200;
+
 class NamedCurve {
   final String name;
   final Curve curve;
@@ -25,48 +73,6 @@ class AnimGraphr extends StatefulWidget {
 
 class _AnimGraphrState extends State<AnimGraphr>
     with SingleTickerProviderStateMixin {
-  final curves = [
-    const NamedCurve('bounceIn', Curves.bounceIn),
-    const NamedCurve('bounceInOut', Curves.bounceInOut),
-    const NamedCurve('bounceOut', Curves.bounceOut),
-    const NamedCurve('decelerate', Curves.decelerate),
-    const NamedCurve('fastLinearToSlowEaseIn', Curves.fastLinearToSlowEaseIn),
-    const NamedCurve('ease', Curves.ease),
-    const NamedCurve('easeIn', Curves.easeIn),
-    const NamedCurve('easeInToLinear', Curves.easeInToLinear),
-    const NamedCurve('easeInSine', Curves.easeInSine),
-    const NamedCurve('easeInQuad', Curves.easeInQuad),
-    const NamedCurve('easeInCubic', Curves.easeInCubic),
-    const NamedCurve('easeInQuart', Curves.easeInQuart),
-    const NamedCurve('easeInQuint', Curves.easeInQuint),
-    const NamedCurve('easeInExpo', Curves.easeInExpo),
-    const NamedCurve('easeInCirc', Curves.easeInCirc),
-    const NamedCurve('easeInBack', Curves.easeInBack),
-    const NamedCurve('easeOut', Curves.easeOut),
-    const NamedCurve('linearToEaseOut', Curves.linearToEaseOut),
-    const NamedCurve('easeOutSine', Curves.easeOutSine),
-    const NamedCurve('easeOutQuad', Curves.easeOutQuad),
-    const NamedCurve('easeOutCubic', Curves.easeOutCubic),
-    const NamedCurve('easeOutQuart', Curves.easeOutQuart),
-    const NamedCurve('easeOutQuint', Curves.easeOutQuint),
-    const NamedCurve('easeOutExpo', Curves.easeOutExpo),
-    const NamedCurve('easeOutCirc', Curves.easeOutCirc),
-    const NamedCurve('easeOutBack', Curves.easeOutBack),
-    const NamedCurve('easeInOutSine', Curves.easeInOutSine),
-    const NamedCurve('easeInOut', Curves.easeInOut),
-    const NamedCurve('easeInOutBack', Curves.easeInOutBack),
-    const NamedCurve('easeInOutCirc', Curves.easeInOutCirc),
-    const NamedCurve('easeInOutCubic', Curves.easeInOutCubic),
-    const NamedCurve('easeInOutQuad', Curves.easeInOutQuad),
-    const NamedCurve('easeInOutQuart', Curves.easeInOutQuart),
-    const NamedCurve('easeInOutQuint', Curves.easeInOutQuint),
-    const NamedCurve('easeInOutExpo', Curves.easeInOutExpo),
-    const NamedCurve('fastOutSlowIn', Curves.fastOutSlowIn),
-    const NamedCurve('elasticIn', Curves.elasticIn),
-    const NamedCurve('elasticOut', Curves.elasticOut),
-    const NamedCurve('elasticInOut', Curves.elasticInOut),
-  ];
-
   Curve currentCurve = Curves.bounceIn;
 
   AnimationController controller;
@@ -124,7 +130,13 @@ class _AnimGraphrState extends State<AnimGraphr>
                 ),
               ),
             ),
-            RaisedButton(onPressed: controller.forward, child: Text('Animate'))
+            RaisedButton(
+                color: Colors.cyan.shade700,
+                onPressed: controller.forward,
+                child: Text(
+                  'Animate',
+                  style: TextStyle(color: Colors.white),
+                ))
           ],
         ),
       ),
@@ -139,17 +151,12 @@ class _AnimGraphrState extends State<AnimGraphr>
   void onCurveChanged(Curve c) => setState(() => currentCurve = c);
 }
 
-final axisPaint = Paint()
-  ..color = Colors.grey.shade600
-  ..strokeWidth = 2;
-
-const divisions = 200;
-
 class CurvePainter extends CustomPainter {
-  final CurvedAnimation anim;
-  final AnimationController controller;
-
   CurvePainter(this.controller, this.anim);
+
+  final CurvedAnimation anim;
+
+  final AnimationController controller;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -185,9 +192,29 @@ class CurvePainter extends CustomPainter {
   }
 
   void _drawAxis(Canvas canvas, Size size) {
+    final textPainter = TextPainter(
+        text: TextSpan(text: 'time', style: TextStyle(color: Colors.black)),
+        textDirection: TextDirection.ltr);
+    textPainter.layout(maxWidth: size.width);
+    textPainter.paint(canvas, Offset(size.width, size.height) - Offset(20, 18));
+
+    final textPainter2 = TextPainter(
+        text: TextSpan(text: 'value', style: TextStyle(color: Colors.black)),
+        textDirection: TextDirection.ltr);
+    textPainter2.layout(maxWidth: size.width);
+    textPainter2.paint(canvas, Offset(10, 0));
+
     canvas.drawLine(
         Offset(0, size.height), Offset(size.width, size.height), axisPaint);
     canvas.drawLine(Offset(0, 0), Offset(0, size.height), axisPaint);
+  }
+
+  paintText(Canvas canvas, String text, Offset offset, double width) {
+    final textPainter = TextPainter(
+        text: TextSpan(text: 'value', style: TextStyle(color: Colors.black)),
+        textDirection: TextDirection.ltr);
+    textPainter.layout(maxWidth: width);
+    textPainter.paint(canvas, Offset(10, 0));
   }
 
   @override
